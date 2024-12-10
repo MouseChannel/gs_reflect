@@ -467,8 +467,10 @@ class GaussianModel:
         normals = np.zeros_like(xyz)
 
 
-        f_dc = self._features_dc.detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy()
-        f_rest = self._features_rest.detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy()
+        # f_dc = self._features_dc.detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy()
+        # f_rest = self._features_rest.detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy()
+        f_dc = self._features_dc.detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy() if not self.brdf else self._features_dc.detach().cpu().numpy()
+        f_rest = self._features_rest.detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy() if not ((self.brdf and self.brdf_mode=="envmap" and self.brdf_dim==0)) else self._features_rest.detach().cpu().numpy()
 
         quadrants = self._quadrant.detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy()
 
@@ -493,9 +495,9 @@ class GaussianModel:
         elements = np.empty(xyz.shape[0], dtype=dtype_full)
         if self.brdf and not viewer_fmt:
             attributes = np.concatenate(
-                (xyz, normals, f_dc, f_rest, opacities, scale, rotation, roughness, specular), axis=1)
+                (xyz, normals, f_dc, f_rest, quadrants,opacities, scale, rotation, roughness, specular), axis=1)
         else:
-            attributes = np.concatenate((xyz, normals, f_dc, f_rest, opacities, scale, rotation), axis=1)
+            attributes = np.concatenate((xyz, normals, f_dc, f_rest, quadrants,opacities, scale, rotation), axis=1)
 
         # attributes = np.concatenate((xyz, normals, f_dc, f_rest, quadrants, opacities, scale, rotation), axis=1)
         # attributes = np.concatenate((xyz, normals, f_dc, f_rest, opacities, scale, rotation), axis=1)
