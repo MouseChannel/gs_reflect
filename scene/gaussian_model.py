@@ -356,7 +356,12 @@ class GaussianModel:
         xyz = np.stack((np.asarray(plydata.elements[0]["x"]),
                         np.asarray(plydata.elements[0]["y"]),
                         np.asarray(plydata.elements[0]["z"])),  axis=1)
-        opacities = np.asarray(plydata.elements[0]["opacity"])[..., np.newaxis]
+        # opacities = np.stack((np.asarray(plydata.elements[0]["opacity_0"]),
+        #                 np.asarray(plydata.elements[0]["opacity_1"]),
+        #                 np.asarray(plydata.elements[0]["opacity_2"]),
+        #                       np.asarray(plydata.elements[0]["opacity_3"])
+        #                       ), axis=1)
+        # opacities = np.asarray(plydata.elements[0]["opacity"])[..., np.newaxis]
 
         if not self.brdf:
             features_dc = np.zeros((xyz.shape[0], 3, 1))
@@ -394,10 +399,29 @@ class GaussianModel:
             for idx, attr_name in enumerate(extra_f_names):
                 features_extra[:, idx] = np.asarray(plydata.elements[0][attr_name])
 
+        extra_f_names = [p.name for p in plydata.elements[0].properties if p.name.startswith("quadrant_")]
+        extra_f_names = sorted(extra_f_names, key=lambda x: int(x.split('_')[-1]))
+        # assert len(extra_f_names)==3*(self.max_sh_degree + 1) ** 2 - 3
+        quadrants = np.zeros((xyz.shape[0], len(extra_f_names)))
+        for idx, attr_name in enumerate(extra_f_names):
+            quadrants[:, idx] = np.asarray(plydata.elements[0][attr_name])
+        # Reshape (P,F*SH_coeffs) to (P, F, SH_coeffs except DC)
+        quadrants = quadrants.reshape((quadrants.shape[0], 3, 8))
+
+
+
         scale_names = [p.name for p in plydata.elements[0].properties if p.name.startswith("scale_")]
         scales = np.zeros((xyz.shape[0], len(scale_names)))
         for idx, attr_name in enumerate(scale_names):
             scales[:, idx] = np.asarray(plydata.elements[0][attr_name])
+
+        opa_names = [p.name for p in plydata.elements[0].properties if p.name.startswith("opacity_")]
+        opa_names = sorted(opa_names, key=lambda x: int(x.split('_')[-1]))
+        opacities = np.zeros((xyz.shape[0], len(opa_names)))
+        for idx, attr_name in enumerate(opa_names):
+            opacities[:, idx] = np.asarray(plydata.elements[0][attr_name])
+
+
 
         rot_names = [p.name for p in plydata.elements[0].properties if p.name.startswith("rot")]
         rots = np.zeros((xyz.shape[0], len(rot_names)))
@@ -425,6 +449,8 @@ class GaussianModel:
         self._opacity = nn.Parameter(torch.tensor(opacities, dtype=torch.float, device="cuda").requires_grad_(True))
         self._scaling = nn.Parameter(torch.tensor(scales, dtype=torch.float, device="cuda").requires_grad_(True))
         self._rotation = nn.Parameter(torch.tensor(rots, dtype=torch.float, device="cuda").requires_grad_(True))
+        self._quadrant = nn.Parameter(torch.tensor(quadrants, dtype=torch.float, device="cuda").transpose(1, 2).contiguous().requires_grad_(True))
+
         if self.brdf:
             self._roughness = nn.Parameter(torch.tensor(roughness, dtype=torch.float, device="cuda").requires_grad_(True))
             self._specular = nn.Parameter(torch.tensor(specular, dtype=torch.float, device="cuda").requires_grad_(True))

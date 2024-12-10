@@ -220,7 +220,9 @@ def readCamerasFromTransforms(path, transformsfile, white_background, extension=
             arr = norm_data[:,:,:3] * norm_data[:, :, 3:4] + bg * (1 - norm_data[:, :, 3:4])
             image = Image.fromarray(np.array(arr*255.0, dtype=np.byte), "RGB")
             alpha_mask = norm_data[:, :, 3]
-            alpha_mask = Image.fromarray(np.array(alpha_mask*255.0, dtype=np.byte), "L")
+            # alpha_mask *=255
+
+            # alpha_mask = Image.fromarray(np.array(alpha_mask*255.0, dtype=np.byte), "L")
             # arr = np.concatenate([arr, norm_data[:, :, 3:4]], axis=-1)
             # image = Image.fromarray(np.array(arr*255.0, dtype=np.byte), "RGBA")
 

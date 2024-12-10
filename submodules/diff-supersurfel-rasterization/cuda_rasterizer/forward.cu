@@ -301,6 +301,7 @@ renderCUDA(
 	uint32_t contributor = 0;
 	uint32_t last_contributor = 0;
 	float C[CHANNELS] = { 0 };
+	float Opacity = 0;
 
 
 #if RENDER_AXUTILITY
@@ -473,6 +474,7 @@ renderCUDA(
 				// C[ch] += features[collected_id[j] * CHANNELS + ch] * w;
 				C[ch] += (features[collected_id[j] * CHANNELS + ch] +  nncolor[ch]) * w;
 				// C[ch] += (Myalpha * nncolor[ch]) * w;
+				Opacity+=w;
 			}
 				
 			T = test_T;
@@ -497,7 +499,9 @@ renderCUDA(
 		final_T[pix_id + H * W] = M1;
 		final_T[pix_id + 2 * H * W] = M2;
 		out_others[pix_id + DEPTH_OFFSET * H * W] = D;
-		out_others[pix_id + ALPHA_OFFSET * H * W] = 1 - T;
+// 		out_others[pix_id + ALPHA_OFFSET * H * W] = 1 - T;
+		out_others[pix_id + ALPHA_OFFSET * H * W] = Opacity;
+
 		for (int ch=0; ch<3; ch++) out_others[pix_id + (NORMAL_OFFSET+ch) * H * W] = N[ch];
 		out_others[pix_id + MIDDEPTH_OFFSET * H * W] = median_depth;
 		out_others[pix_id + DISTORTION_OFFSET * H * W] = distortion;

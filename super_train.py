@@ -100,6 +100,10 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations):
         #         losses_extra['delta_reg'] = delta_normal_loss(render_pkg["delta_normal_norm"], render_pkg["alpha"])
 
         # Loss
+
+
+
+
         gt_image = viewpoint_cam.original_image.cuda()
         Ll1 = l1_loss(image, gt_image)
         loss = (1.0 - opt.lambda_dssim) * Ll1 + opt.lambda_dssim * (1.0 - ssim(image, gt_image))
@@ -116,6 +120,22 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations):
         dist_loss = lambda_dist * (rend_dist).mean()
         # loss
         total_loss = loss + dist_loss  # + normal_loss
+
+        o = render_pkg["rend_alpha"].clamp(1e-6, 1 - 1e-6)
+        image_mask =viewpoint_cam.gt_alpha_mask
+        image_mask = image_mask[None,...]
+        image_mask = torch.from_numpy(image_mask)
+        from torchvision.utils import save_image
+        save_image(o,"o.png")
+        save_image(image_mask,"image_mask.png")
+
+
+        loss_mask_entropy = -(image_mask * torch.log(o) + (1 - image_mask) * torch.log(1 - o)).mean()
+        # tb_dict["loss_mask_entropy"] = loss_mask_entropy.item()
+        loss = loss + 0.05* loss_mask_entropy
+        total_loss+=loss
+
+
         #
         # total_loss +=losses_extra['zero_one']
         total_loss.backward()
