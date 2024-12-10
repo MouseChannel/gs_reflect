@@ -12,11 +12,12 @@ datasets_source = "datasets"
 datasets =os.listdir(datasets_source)
 # "horse_blender",
  
-target_value = "horse_blender"
-index_of_target = datasets.index(target_value)
-my_list = [target_value] + datasets[:index_of_target] + datasets[index_of_target + 1:]
-print(my_list)
-datasets = my_list
+if datasets.count("horse_blender")>0:
+    target_value = "horse_blender"
+    index_of_target = datasets.index(target_value)
+    my_list = [target_value] + datasets[:index_of_target] + datasets[index_of_target + 1:]
+    print(my_list)
+    datasets = my_list
 
 common_args = " --eval -w --brdf_dim 1 --sh_degree -1 --lambda_predicted_normal 2e-1 --brdf_env 512"
 for dataset in datasets:
