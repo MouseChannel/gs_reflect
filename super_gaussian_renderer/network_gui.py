@@ -17,7 +17,7 @@ import struct
 from scene.cameras import MiniCam
 
 host = "127.0.0.1"
-port = 6010
+port = 6009
 
 conn = None
 addr = None
@@ -27,7 +27,7 @@ listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 def init(wish_host, wish_port):
     global host, port, listener
     host = wish_host
-    port = wish_port
+    port = wish_port+1
     listener.bind((host, port))
     listener.listen()
     listener.settimeout(0)
