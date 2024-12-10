@@ -125,14 +125,14 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations):
         image_mask =viewpoint_cam.gt_alpha_mask
         image_mask = image_mask[None,...]
         image_mask = torch.from_numpy(image_mask).cuda()
-        from torchvision.utils import save_image
-        save_image(o,"o.png")
-        save_image(image_mask,"image_mask.png")
+        # from torchvision.utils import save_image
+        # save_image(o,"o.png")
+        # save_image(image_mask,"image_mask.png")
 
 
         loss_mask_entropy = -(image_mask * torch.log(o) + (1 - image_mask) * torch.log(1 - o)).mean()
         # tb_dict["loss_mask_entropy"] = loss_mask_entropy.item()
-        loss = loss + 0.1* loss_mask_entropy
+        loss = loss + 0.05* loss_mask_entropy
         total_loss+=loss
 
 
