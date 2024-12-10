@@ -784,8 +784,10 @@ class GaussianModel:
                 new_rotation = self._rotation[selected_pts_mask].repeat(N,1)
 
 
-                new_features_dc = self._features_dc[selected_pts_mask].repeat(N,1,1)
-                new_features_rest = self._features_rest[selected_pts_mask].repeat(N,1,1)
+                # new_features_dc = self._features_dc[selected_pts_mask].repeat(N,1,1)
+                # new_features_rest = self._features_rest[selected_pts_mask].repeat(N,1,1)
+                new_features_dc = self._features_dc[selected_pts_mask].repeat(N,1,1) if not self.brdf else self._features_dc[selected_pts_mask].repeat(N,1)
+                new_features_rest = self._features_rest[selected_pts_mask].repeat(N,1,1) if not ((self.brdf and self.brdf_mode=="envmap" and self.brdf_dim==0)) else self._features_rest[selected_pts_mask].repeat(N,1)
 
                 new_quadrant = self._quadrant[selected_pts_mask].repeat(N,1,1)
 
