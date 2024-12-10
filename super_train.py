@@ -132,7 +132,7 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations):
 
         loss_mask_entropy = -(image_mask * torch.log(o) + (1 - image_mask) * torch.log(1 - o)).mean()
         # tb_dict["loss_mask_entropy"] = loss_mask_entropy.item()
-        loss = loss + 0.05* loss_mask_entropy
+        loss = loss + 0.1* loss_mask_entropy
         total_loss+=loss
 
 
