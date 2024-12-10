@@ -229,10 +229,10 @@ def training_report(tb_writer, iteration, Ll1, loss, losses_extra, l1_loss, elap
                         for k in render_pkg.keys():
                             if render_pkg[k].dim() < 3 or k == "render" or k == "delta_normal_norm":
                                 continue
-                            if k == "depth":
+                            if k == "rend_dist" or k =="surf_depth":
                                 image_k = apply_depth_colormap(-render_pkg[k][0][..., None])
                                 image_k = image_k.permute(2, 0, 1)
-                            elif k == "alpha":
+                            elif k == "rend_alpha":
                                 image_k = apply_depth_colormap(render_pkg[k][0][..., None], min=0., max=1.)
                                 image_k = image_k.permute(2, 0, 1)
                             else:
@@ -269,7 +269,7 @@ if __name__ == "__main__":
     parser.add_argument('--ip', type=str, default="127.0.0.1")
     parser.add_argument('--port', type=int, default=6009)
     parser.add_argument('--detect_anomaly', action='store_true', default=False)
-    parser.add_argument("--test_iterations", nargs="+", type=int, default=[7_000, 30_000])
+    parser.add_argument("--test_iterations", nargs="+", type=int, default=[10,1_000,5_000,8_000,15_000,20_000, 30_000])
     parser.add_argument("--save_iterations", nargs="+", type=int, default=[7_000, 30_000])
     parser.add_argument("--quiet", action="store_true")
     args = parser.parse_args(sys.argv[1:])
