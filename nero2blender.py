@@ -32,8 +32,14 @@ if __name__ == '__main__':
     img_files = [f'{root}/{k}.png' for k in range(img_num)]
     depth_files = [f'{root}/{k}-depth.png' for k in range(img_num)]
     points_file = os.path.join(root, "eval_pts.ply")
-
-    test_ids, train_ids = read_pickle(os.path.join(opt.path, 'synthetic_split_128.pkl'))
+    arr = np.linspace(6, 127, 128, dtype=int)
+    import random
+    random.shuffle(arr)  # 先打乱原列表顺序
+    mid = len(arr) // 3
+    test_ids = arr[:mid]
+    train_ids = arr[mid:]
+    # return list1, list2
+    # test_ids, train_ids = read_pickle(os.path.join(opt.path, 'synthetic_split_128.pkl'))
 
     # process 2 splits
     for split in ['train', 'test']:

@@ -423,10 +423,10 @@ class GaussianModel:
         #     l.append('f_dc_{}'.format(i))
         # for i in range(self._features_rest.shape[1]*self._features_rest.shape[2]):
         #     l.append('f_rest_{}'.format(i))
-        # for i in range(self._quadrant.shape[1]*self._quadrant.shape[2]):
-        #     l.append('quadrant_{}'.format(i))
-        # for i in range(self._opacity.shape[1]):
-        #     l.append('opacity_{}'.format(i))
+        for i in range(self._quadrant.shape[1]*self._quadrant.shape[2]):
+            l.append('quadrant_{}'.format(i))
+        for i in range(self._opacity.shape[1]):
+            l.append('opacity_{}'.format(i))
         # for i in range(self._scaling.shape[1]):
         #     l.append('scale_{}'.format(i))
         # for i in range(self._rotation.shape[1]):
@@ -438,7 +438,7 @@ class GaussianModel:
             for i in range(self._features_rest.shape[1] * self._features_rest.shape[2]):
                 l.append('f_rest_{}'.format(i))
         else:
-            l.extend(['nx2', 'ny2', 'nz2'])
+            # l.extend(['nx2', 'ny2', 'nz2'])
             for i in range(self._features_dc.shape[1]):
                 l.append('f_dc_{}'.format(i))
             if viewer_fmt:
@@ -449,7 +449,7 @@ class GaussianModel:
                 features_rest_len = self._features_rest.shape[1] * self._features_rest.shape[2]
             for i in range(features_rest_len):
                 l.append('f_rest_{}'.format(i))
-        l.append('opacity')
+        # l.append('opacity')
         for i in range(self._scaling.shape[1]):
             l.append('scale_{}'.format(i))
         for i in range(self._rotation.shape[1]):
@@ -495,12 +495,14 @@ class GaussianModel:
         elements = np.empty(xyz.shape[0], dtype=dtype_full)
         if self.brdf and not viewer_fmt:
             attributes = np.concatenate(
-                (xyz, normals, f_dc, f_rest, quadrants,opacities, scale, rotation, roughness, specular), axis=1)
+                (xyz, normals, quadrants, opacities,f_dc, f_rest, scale, rotation, roughness, specular), axis=1)
         else:
             attributes = np.concatenate((xyz, normals, f_dc, f_rest, quadrants,opacities, scale, rotation), axis=1)
 
         # attributes = np.concatenate((xyz, normals, f_dc, f_rest, quadrants, opacities, scale, rotation), axis=1)
         # attributes = np.concatenate((xyz, normals, f_dc, f_rest, opacities, scale, rotation), axis=1)
+
+
         elements[:] = list(map(tuple, attributes))
         el = PlyElement.describe(elements, 'vertex')
         PlyData([el]).write(path)
