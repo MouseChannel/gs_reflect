@@ -124,7 +124,7 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations):
         o = render_pkg["rend_alpha"].clamp(1e-6, 1 - 1e-6)
         image_mask =viewpoint_cam.gt_alpha_mask
         image_mask = image_mask[None,...]
-        image_mask = torch.from_numpy(image_mask)
+        image_mask = torch.from_numpy(image_mask).cuda()
         from torchvision.utils import save_image
         save_image(o,"o.png")
         save_image(image_mask,"image_mask.png")
