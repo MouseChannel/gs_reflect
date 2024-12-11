@@ -499,8 +499,8 @@ renderCUDA(
 		final_T[pix_id + H * W] = M1;
 		final_T[pix_id + 2 * H * W] = M2;
 		out_others[pix_id + DEPTH_OFFSET * H * W] = D;
-// 		out_others[pix_id + ALPHA_OFFSET * H * W] = 1 - T;
-		out_others[pix_id + ALPHA_OFFSET * H * W] = Opacity;
+		out_others[pix_id + ALPHA_OFFSET * H * W] = 1 - T;
+// 		out_others[pix_id + ALPHA_OFFSET * H * W] = Opacity;
 
 		for (int ch=0; ch<3; ch++) out_others[pix_id + (NORMAL_OFFSET+ch) * H * W] = N[ch];
 		out_others[pix_id + MIDDEPTH_OFFSET * H * W] = median_depth;

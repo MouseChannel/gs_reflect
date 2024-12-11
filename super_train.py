@@ -91,10 +91,10 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations):
         # image, viewspace_point_tensor, visibility_filter, radii = render_pkg["render"], render_pkg["viewspace_points"],
         # render_pkg["visibility_filter"], render_pkg["radii"]
         losses_extra = {}
-        if pipe.brdf and iteration > opt.normal_reg_from_iter:
+        # if pipe.brdf and iteration > opt.normal_reg_from_iter:
         #     if iteration<opt.normal_reg_util_iter:
         #         losses_extra['predicted_normal'] = predicted_normal_loss(render_pkg["normal"], render_pkg["normal_ref"], render_pkg["alpha"])
-            losses_extra['zero_one'] = zero_one_loss(render_pkg["rend_alpha"])
+        #     losses_extra['zero_one'] = zero_one_loss(render_pkg["rend_alpha"])
         #     if "delta_normal_norm" not in render_pkg.keys() and opt.lambda_delta_reg>0: assert()
         #     if "delta_normal_norm" in render_pkg.keys():
         #         losses_extra['delta_reg'] = delta_normal_loss(render_pkg["delta_normal_norm"], render_pkg["alpha"])
